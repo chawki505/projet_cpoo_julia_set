@@ -1,14 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="julia_set_paquage.Controller_interface_main"
-            prefHeight="400.0" prefWidth="600.0">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="301.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="julia_set_paquage.Controller_interface_main">
 
+    <children>
+        <AnchorPane prefHeight="301.0" prefWidth="301.0">
+            <children>
+                <ImageView fitHeight="301.0" fitWidth="301.0" pickOnBounds="true">
+                    <image>
+                        <Image url="@julia_pic.png" />
+                    </image>
+                    <effect>
+                        <DropShadow />
+                    </effect>
+                </ImageView>
+            </children>
+            <effect>
+                <DropShadow />
+            </effect>
+        </AnchorPane>
+
+        <AnchorPane layoutX="300.0" prefHeight="301.0" prefWidth="301.0" style="-fx-background-color: #FFFF;">
+
+            <children>
+                <Label layoutX="97.0" layoutY="14.0" text="Julia Set" textFill="#212121">
+                    <font>
+                        <Font name="Arial" size="28.0" />
+                    </font>
+                </Label>
+                <JFXButton fx:id="button_calculer" buttonType="RAISED" layoutX="106.0" layoutY="203.0" prefHeight="32.0" prefWidth="91.0" style="-fx-background-color: #03a9f4;" text="Calculer" textFill="WHITE">
+                    <font>
+                        <Font name="Arial Bold" size="13.0" />
+                    </font>
+                </JFXButton>
+                <JFXButton fx:id="button_quitter" buttonType="RAISED" layoutX="113.0" layoutY="246.0" onAction="#quiter" prefHeight="32.0" prefWidth="75.0" style="-fx-background-color: #03a9f4;" text="Quitter" textFill="WHITE">
+                    <font>
+                        <Font name="Arial" size="13.0" />
+                    </font>
+                </JFXButton>
+                <Line endX="89.0" layoutX="156.0" layoutY="54.0" startX="-100.0" stroke="#212121" />
+                <JFXTextField fx:id="textField_real" focusColor="#2196f3" layoutX="45.0" layoutY="129.0" prefHeight="27.0" prefWidth="61.0" promptText="Réel" unFocusColor="#898989" />
+                <Label layoutX="14.0" layoutY="142.0" text="Z =" textFill="#212121" />
+                <Label layoutX="203.0" layoutY="142.0" prefHeight="17.0" prefWidth="0.0" text="i" />
+                <JFXComboBox fx:id="comboBox_signe" focusColor="#2196f3" layoutX="127.0" layoutY="129.0" prefHeight="27.0" prefWidth="61.0" promptText="Signe" unFocusColor="#898989" />
+                <JFXTextField fx:id="textField_img" focusColor="#2196f3" layoutX="215.0" layoutY="129.0" prefHeight="27.0" prefWidth="61.0" promptText="Img" unFocusColor="#898989" />
+                <Text fill="#212121" fontSmoothingType="LCD" layoutX="26.0" layoutY="89.0" lineSpacing="1.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Veuillez saisir votre formule en nombres complexe pour calculer son ensemble Julia" textAlignment="CENTER" wrappingWidth="254.95361328125">
+               <font>
+                  <Font name="Arial" size="14.0" />
+               </font></Text>
+            </children>
+
+            <effect>
+                <DropShadow />
+            </effect>
+
+        </AnchorPane>
+
+    </children>
+
+    <effect>
+        <DropShadow />
+    </effect>
 </AnchorPane>
