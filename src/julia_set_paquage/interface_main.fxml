@@ -39,7 +39,7 @@
                         <Font name="Arial" size="28.0" />
                     </font>
                 </Label>
-                <JFXButton fx:id="button_calculer" buttonType="RAISED" layoutX="106.0" layoutY="203.0" prefHeight="32.0" prefWidth="91.0" style="-fx-background-color: #03a9f4;" text="Calculer" textFill="WHITE">
+                <JFXButton fx:id="button_calculer" buttonType="RAISED" layoutX="106.0" layoutY="203.0" onAction="#calculer" prefHeight="32.0" prefWidth="91.0" style="-fx-background-color: #03a9f4;" text="Calculer" textFill="WHITE">
                     <font>
                         <Font name="Arial Bold" size="13.0" />
                     </font>
