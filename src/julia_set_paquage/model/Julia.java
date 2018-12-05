@@ -34,7 +34,7 @@ public class Julia {
     public Julia() {
         this.complexe = new Complexe();
         this.maxIteration = 100;
-        this.zoom = 1;
+        this.zoom = 1.5;
         this.moveX = 0;
         this.moveY = 0;
     }
@@ -60,63 +60,81 @@ public class Julia {
         return moveY;
     }
 
-    private double redimentionX(int initialisation, int largeurFenetre) {
-        return ((1.5 *
-                (initialisation - (largeurFenetre / 2)) /
-                (0.5 * this.zoom * largeurFenetre))
-                + this.moveX);
+    protected double redimentionX(int initialisation, float largeurFenetre) {
+        return 1.5 * (initialisation - largeurFenetre / 2) / (0.5 * zoom * largeurFenetre) + moveX;
     }
 
-    private double redimentionY(int initialisation, int longeurFenetre) {
-        return (((initialisation - (longeurFenetre / 2))
-                / (0.5 * this.zoom * longeurFenetre))
-                + this.moveY);
+    protected double redimentionY(int initialisation, float longeurFenetre) {
+        return (initialisation - longeurFenetre / 2) / (0.5 * zoom * longeurFenetre) + moveY;
+    }
+
+    protected float divergence(Complexe z) {
+        float i = this.maxIteration;
+        while (z.modulus() < 2 && i > 0) {
+            //calcul new z
+            double cx = z.getReel() * z.getReel() - z.getImm() * z.getImm() + this.complexe.getReel();
+            double cy = 2.0 * z.getReel() * z.getImm() + this.complexe.getImm();
+
+            z = new Complexe(cx, cy);
+
+            i--;
+        }
+
+        return i;
     }
 
 
     public BufferedImage drawJulia(int largeurMax, int longeurMax) {
+
         BufferedImage image = new BufferedImage(largeurMax, longeurMax, BufferedImage.TYPE_INT_RGB);
-        Complexe z;
+
         for (int x = 0; x < largeurMax; x++) {
+
             for (int y = 0; y < longeurMax; y++) {
-                z = new Complexe(redimentionX(x, largeurMax), redimentionY(y, longeurMax));
 
-                double i = divergenceIndex(z, this.complexe, this.maxIteration);
+                Complexe z = new Complexe(redimentionX(x, largeurMax), redimentionY(y, longeurMax));
 
-                int color = Color.HSBtoRGB((float) ((this.maxIteration / i) % 1), 1, (i > 0) ? 1 : 0);
+                float i = divergence(z);
+
+                int color = Color.HSBtoRGB((this.maxIteration / (i) % 1), 1, i > 0 ? 1 : 0);
+
                 image.setRGB(x, y, color);
             }
         }
         return image;
     }
 
+
     public BufferedImage colorisation(BufferedImage image, Color maCouleur, boolean degrade, int tolerance) {
-        int taille = image.getHeight() * image.getWidth();
-        int couleur[] = new int[taille];
-        int x = 0;
+
+
         for (int i = 0; i < image.getWidth(); i++) {
+
             for (int j = 0; j < image.getHeight(); j++) {
+
                 Color c = new Color(image.getRGB(i, j));
+
                 if (c.getGreen() < tolerance) {
+
                     Color nc = new Color(0, 0, 0);
+
                     image.setRGB(i, j, nc.getRGB());
+
                 } else {
+
                     if (degrade) {
-                        int nr = c.getRed() + maCouleur.getRed();
-                        int ng = c.getGreen() + maCouleur.getGreen();
-                        int nb = c.getBlue() + maCouleur.getBlue();
-                        if (nr > 255) {
-                            nr = 255;
-                        }
-                        if (ng > 255) {
-                            ng = 255;
-                        }
-                        if (nb > 255) {
-                            nb = 255;
-                        }
+                        int nr = (c.getRed() + maCouleur.getRed()) % 256;
+
+                        int ng = (c.getGreen() + maCouleur.getGreen()) % 256;
+
+                        int nb = (c.getBlue() + maCouleur.getBlue()) % 256;
+
                         Color nc = new Color(nr, ng, nb);
+
                         image.setRGB(i, j, nc.getRGB());
+
                     } else {
+
                         image.setRGB(i, j, maCouleur.getRGB());
                     }
                 }
@@ -125,39 +143,26 @@ public class Julia {
         return image;
     }
 
-    public BufferedImage drawMandelbrot(int largeurMax, int longeurMax) {
-        BufferedImage image = new BufferedImage(largeurMax, longeurMax, BufferedImage.TYPE_INT_RGB);
-        Complexe z = new Complexe();
-        for (int x = 0; x < largeurMax; x++) {
-            for (int y = 0; y < longeurMax; y++) {
-                z = new Complexe(redimentionX(x, largeurMax), redimentionY(y, longeurMax));
-                double i = divergenceIndex(this.complexe, this.complexe, this.maxIteration);
-                int c = Color.HSBtoRGB((float) ((this.maxIteration / i) % 1), 1, i > 0 ? 1 : 0);
-                //int complexe = Color.HSBtoRGB(0, 1, i > 0 ? 1 : 0);
-                image.setRGB(x, y, c);
-            }
-        }
-        return image;
-    }
-
     public static void saveToFile(BufferedImage image, String imageName, String path) {
         try {
-            File file = new File(path, imageName);
-            ImageIO.write(image, "PNG", file);
+
+            File file = new File(path, imageName + ".png");
+
+            if (file.exists()) {
+                int i = 0;
+                while (file.exists()) {
+                    i++;
+                    file = new File(path, imageName + "(" + i + ")" + ".png");
+                }
+                ImageIO.write(image, "PNG", file);
+
+            } else
+                ImageIO.write(image, "PNG", file);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public static int divergenceIndex(Complexe x0, Complexe c, int maxIteration) {
 
-        int i = maxIteration;
-        while (x0.modulus() < 4 && i > 0) {
-            x0 = c.plus(x0.times(x0));
-            i--;
-        }
-        return i;
-
-    }
 }

@@ -1,6 +1,8 @@
 package julia_set_paquage.controller;
 
 import com.jfoenix.controls.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,12 +16,17 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import julia_set_paquage.model.Complexe;
 import julia_set_paquage.model.Julia;
+import julia_set_paquage.model.Mandelbrot;
 
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +60,13 @@ public class Controller_interface_main implements Initializable {
 
     @FXML
     private JFXRadioButton radioButton_mandelbrot;
+    @FXML
+    private JFXColorPicker colorPicker_schema;
+    @FXML
+    private JFXColorPicker colorPicker_convergence;
 
+
+    private BufferedImage my_fractal;
 
     @FXML
     //methode action pour le button quiter
@@ -66,19 +79,80 @@ public class Controller_interface_main implements Initializable {
     //methode to go to interface julia set result
     private void calculer() throws IOException {
 
-        set_image2();
+        if (isInputValid()) {
+
+            Complexe complexe = new Complexe(Double.parseDouble(textField_real.getText()), Double.parseDouble(textField_img.getText()));
+
+
+            if (radioButton_julia.isSelected()) {
+
+                Julia julia = new Julia(complexe);
+
+                //get buffredimage
+                my_fractal = julia.drawJulia((int) imageView_image.getFitWidth(), (int) imageView_image.getFitHeight());
+
+                // my_fractal = julia.colorisation(my_fractal, new Color(244, 29, 0), true, 100);
+            } else {
+
+
+                Mandelbrot mandelbrot = new Mandelbrot(complexe);
+
+                //get buffredimage
+                my_fractal = mandelbrot.drawMandelbrot((int) imageView_image.getFitWidth(), (int) imageView_image.getFitHeight());
+
+                // my_fractal = julia.colorisation(my_fractal, new Color(244, 29, 0), true, 100);
+            }
+
+            Image image = SwingFXUtils.toFXImage(my_fractal, null);
+
+            //afficher dans imageview
+            imageView_image.setImage(image);
+        }
+
     }
 
 
     @FXML
     //methode to go to interface julia set result
     private void reset() {
-
+        my_fractal = null;
+        imageView_image.setImage(null);
+        textField_img.setText(null);
+        textField_real.setText(null);
+        colorPicker_convergence.setValue(null);
+        colorPicker_schema.setValue(null);
+        radioButton_julia.setSelected(true);
+        radioButton_mandelbrot.setSelected(false);
     }
 
     @FXML
     //methode to go to interface julia set result
     private void save_png() throws IOException {
+
+        if (my_fractal != null) {
+
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            File selectedDirectory = directoryChooser.showDialog(new Stage());
+
+            if (selectedDirectory == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur path");
+                alert.setHeaderText("Choose path");
+                alert.setContentText("Veuillez selectioner un repertoire");
+                alert.showAndWait();
+
+            } else {
+                Julia.saveToFile(my_fractal, "JuliaSet", selectedDirectory.getAbsolutePath());
+
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Image set");
+                alert.setHeaderText("Image creer");
+                alert.setContentText("Votre image est sauvguarder dans \n" + selectedDirectory.getAbsolutePath());
+                alert.showAndWait();
+            }
+
+
+        }
 
     }
 
@@ -121,59 +195,12 @@ public class Controller_interface_main implements Initializable {
     }
 
 
-    private void set_image() {
-        //get buffredimage
-        BufferedImage bf = null;
-        try {
-            bf = ImageIO.read(new File("img/julia_pic.png"));
-        } catch (IOException ex) {
-            System.out.println("Image failed to load.");
-        }
-
-
-        //create image pixel par pixel
-        WritableImage wr = setWritableImage(bf);
-
-        //afficher dans imageview
-        imageView_image.setImage(wr);
-
-    }
-
-    private void set_image2() {
-
-
-        Julia julia = new Julia();
-        //get buffredimage
-        BufferedImage bf = julia.drawJulia((int) imageView_image.getFitWidth(), (int) imageView_image.getFitHeight());
-        //bf = julia.colorisation(bf, new Color(3, 169, 244), true, 100);
-        //  WritableImage wr = setWritableImage(bf);
-
-        Image image = SwingFXUtils.toFXImage(bf, null);
-
-        //afficher dans imageview
-        imageView_image.setImage(image);
-
-    }
-
-    private WritableImage setWritableImage(BufferedImage bf) {
-        //create image pixel par pixel
-        WritableImage wr = null;
-        if (bf != null) {
-            wr = new WritableImage(bf.getWidth(), bf.getHeight());
-            PixelWriter pw = wr.getPixelWriter();
-            for (int x = 0; x < bf.getWidth(); x++) {
-                for (int y = 0; y < bf.getHeight(); y++) {
-                    pw.setArgb(x, y, bf.getRGB(x, y));
-                }
-            }
-        }
-        return wr;
-    }
-
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+
+        textField_real.setText("0.285");
+        textField_img.setText("0.01");
 
     }
 }

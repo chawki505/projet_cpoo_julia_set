@@ -1,6 +1,6 @@
 package julia_set_paquage.model;
 
-public final class Complexe {
+public class Complexe {
 
     private final double reel;
     private final double imm;
@@ -8,8 +8,8 @@ public final class Complexe {
 
     //default constructor with init parametre
     public Complexe() {
-        this.reel = 0.3;
-        this.imm = 0.5;
+        this.reel = -0.5;
+        this.imm = 0.6;
     }
 
     public Complexe(double reel, double imm) {
@@ -27,18 +27,55 @@ public final class Complexe {
     }
 
 
-    public Complexe plus(Complexe other) {
-        return new Complexe(this.reel + other.reel, this.imm + other.imm);
+    // add two comlexe number
+    public Complexe plus(Complexe b) {
+        Complexe a = this;       // invoking object
+
+        double real = a.getReel() + b.getReel();
+        double imag = a.getImm() + b.getImm();
+
+        return new Complexe(real, imag);
     }
 
-    public Complexe times(Complexe other) {
-        double nr = (this.reel * other.reel) - (this.imm * other.imm);
-        double ni = (this.reel * other.imm) + (this.imm * other.reel);
-        return new Complexe(nr, ni);
+    //version static
+    public static Complexe plus(Complexe a, Complexe b) {
+
+        double real = a.getReel() + b.getReel();
+        double imag = a.getImm() + b.getImm();
+
+        return new Complexe(real, imag);
+
     }
 
+    // multiple two comlexe number
+    public Complexe times(Complexe b) {
+        Complexe a = this;       // invoking object
+
+        double real = (a.getReel() * b.getReel()) - (a.getImm() * b.getImm());
+        double imag = (a.getReel() * b.getImm()) + (a.getImm() * b.getImm());
+
+        return new Complexe(real, imag);
+    }
+
+    //version static
+    public static Complexe times(Complexe a, Complexe b) {
+
+        double real = (a.getReel() * b.getReel()) - (a.getImm() * b.getImm());
+        double imag = (a.getReel() * b.getImm()) + (a.getImm() * b.getImm());
+
+        return new Complexe(real, imag);
+    }
+
+    // calcule modulus to the comlexe number
     public double modulus() {
-        return Math.sqrt((this.reel * this.reel) + (this.imm * this.imm));
+        Complexe a = this;       // invoking object
+        return Math.sqrt((a.getReel() * a.getReel()) + (a.getImm() * a.getImm()));
+    }
+
+
+    // calcule modulus to the comlexe number
+    public static double modulus(Complexe a) {
+        return Math.sqrt((a.getReel() * a.getReel()) + (a.getImm() * a.getImm()));
     }
 
 
