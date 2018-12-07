@@ -61,19 +61,29 @@ public class Controller_interface_main implements Initializable {
     @FXML
     private JFXRadioButton radioButton_mandelbrot;
     @FXML
-    private JFXColorPicker colorPicker_schema;
-    @FXML
     private JFXColorPicker colorPicker_convergence;
 
-
     private BufferedImage my_fractal;
+
+    @FXML
+    private JFXSlider slider_zome;
+
+    @FXML
+    private JFXSlider slider_moveX;
+
+    @FXML
+    private JFXSlider slider_moveY;
+
+
+    @FXML
+    private JFXTextField textField_maxIteration;
+
 
     @FXML
     //methode action pour le button quiter
     private void quiter(ActionEvent event) throws IOException {
         ((Node) (event.getSource())).getScene().getWindow().hide();
     }
-
 
     @FXML
     //methode to go to interface julia set result
@@ -86,12 +96,21 @@ public class Controller_interface_main implements Initializable {
 
             if (radioButton_julia.isSelected()) {
 
-                Julia julia = new Julia(complexe);
+                Julia julia = new Julia(complexe, Integer.parseInt(textField_maxIteration.getText()), slider_zome.getValue(), slider_moveX.getValue(), slider_moveY.getValue());
 
                 //get buffredimage
                 my_fractal = julia.drawJulia((int) imageView_image.getFitWidth(), (int) imageView_image.getFitHeight());
 
-                // my_fractal = julia.colorisation(my_fractal, new Color(244, 29, 0), true, 100);
+                //get color
+                javafx.scene.paint.Color fx = colorPicker_convergence.getValue();
+
+                //convert color
+                Color color = new Color((float) fx.getRed(), (float) fx.getGreen(), (float) fx.getBlue(), (float) fx.getOpacity());
+
+                //set colorisation
+                my_fractal = julia.colorisation(my_fractal, color, true, 10);
+
+
             } else {
 
 
@@ -107,6 +126,7 @@ public class Controller_interface_main implements Initializable {
 
             //afficher dans imageview
             imageView_image.setImage(image);
+
         }
 
     }
@@ -120,9 +140,12 @@ public class Controller_interface_main implements Initializable {
         textField_img.setText(null);
         textField_real.setText(null);
         colorPicker_convergence.setValue(null);
-        colorPicker_schema.setValue(null);
         radioButton_julia.setSelected(true);
         radioButton_mandelbrot.setSelected(false);
+        slider_zome.setValue(1);
+        slider_moveX.setValue(0);
+        slider_moveY.setValue(0);
+        textField_maxIteration.setText("100");
     }
 
     @FXML
@@ -181,6 +204,16 @@ public class Controller_interface_main implements Initializable {
                 errorMessage += "- votre saisie du nombre imaginaire n'est pas un nombre correcte !\n";
             }
         }
+
+        if (textField_maxIteration.getText() == null || textField_maxIteration.getText().length() == 0) {
+            errorMessage += "- vous n'avez pas saisi le nombre d'iteration max!\n";
+        } else {
+            try {
+                Float.parseFloat(textField_maxIteration.getText());
+            } catch (NumberFormatException e) {
+                errorMessage += "- votre saisie du nombre d'iteration max n'est pas un nombre correcte !\n";
+            }
+        }
         if (errorMessage.length() == 0) {
             return true;
         } else {
@@ -201,6 +234,11 @@ public class Controller_interface_main implements Initializable {
 
         textField_real.setText("0.285");
         textField_img.setText("0.01");
+        slider_zome.setValue(1);
+        slider_moveX.setValue(0);
+        slider_moveY.setValue(0);
+        textField_maxIteration.setText("100");
+
 
     }
 }
