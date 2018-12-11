@@ -23,3 +23,21 @@
     -fx-fill: white;
     -fx-stroke: white;
 }
+
+.jfx-slider > .axis > .axis-tick-mark {
+    -fx-stroke: #2196f3;
+}
+
+.jfx-slider > .axis > .axis-minor-tick-mark {
+    -fx-stroke: #2196f3;
+}
+
+.AnchorPane {
+    -fx-background-color: #ffffff;
+}
+
+.JFXButton {
+    -fx-background-color: #2196f3;
+    -fx-text-fill: #FFFFFF;
+
+}
