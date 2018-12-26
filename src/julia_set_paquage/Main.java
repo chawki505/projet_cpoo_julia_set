@@ -11,6 +11,7 @@ import julia_set_paquage.model.Fractal;
 import julia_set_paquage.model.Julia;
 import julia_set_paquage.model.Mandelbrot;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main extends Application {
@@ -27,85 +28,67 @@ public class Main extends Application {
     }
 
 
-    public static void interaction_console() {
-
+    private static void interaction_console() {
         float real, img;
-        int choix;
+        String choix;
         boolean status = true;
         Scanner sc = new Scanner(System.in);
 
         while (status) {
-            System.out.println("\nVeuillez saisir un mode :");
+            System.out.println("Veuillez saisir un mode :");
             System.out.println("1- Julia Set");
             System.out.println("2- Mandelbrot Set");
-            System.out.println("3- Retour");
+            System.out.println("3- Quiter");
             System.out.print("Votre choix ? :");
-            choix = sc.nextInt();
+            choix = sc.nextLine();
 
 
             switch (choix) {
-                case 1:
+                case "1":
 
-                    System.out.println("\nVeuillez saisir le nombre complexe de la fomre (reel + i imaginaire) :");
-                    System.out.print("Real :");
-                    real = sc.nextFloat();
-                    System.out.print("Imaginaire");
-                    img = sc.nextFloat();
+                    System.out.println(" --> Veuillez saisir le nombre complexe de la fomre (reel + i imaginaire) :");
+                    System.out.print("   --> Real :");
+                    try {
+                        real = Float.valueOf(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        break;
+                    }
+                    System.out.print("   --> Imaginaire :");
+
+                    try {
+                        img = Float.valueOf(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        break;
+                    }
                     Complexe complexe = new Complexe(real, img);
                     Julia julia = new Julia(complexe, 100, 1, 0, 0);
                     Fractal.saveToFile(julia.drawJulia(1000, 1000), "fractal_julia", System.getenv("PWD"));
-                    System.out.println("image enregister dans " + System.getenv("PWD"));
+                    System.out.println("   --> image enregister dans " + System.getenv("PWD"));
                     break;
 
-                case 2:
+                case "2":
                     Mandelbrot mandelbrot = new Mandelbrot(100, 1, 0, 0);
                     Fractal.saveToFile(mandelbrot.drawMandelbrot(1000, 1000), "fractal_mandelbrot", System.getenv("PWD"));
-                    System.out.println("image enregister dans " + System.getenv("PWD"));
+                    System.out.println("    --> image enregister dans " + System.getenv("PWD"));
                     break;
 
 
-                case 3:
+                case "3":
                     status = false;
+                    Runtime.getRuntime().exit(0);
                     break;
             }
 
+            System.out.println();
         }
     }
 
 
     public static void main(String[] args) {
-
-        Scanner sc = new Scanner(System.in);
-        boolean staus = true;
-
-
-        while (staus) {
-
-            System.out.println("\nChoisire un mode :");
-            System.out.println("1- Console");
-            System.out.println("2- Interface graphique");
-            System.out.println("3- Quiter");
-            System.out.print("mode : ");
-
-            int choix = sc.nextInt();
-
-            switch (choix) {
-                case 1:
-                    System.out.println("\nmode console (saisir q pour quitter");
-                    interaction_console();
-                    break;
-
-                case 2:
-                    launch(args);
-                    break;
-
-
-                case 3:
-                    staus = false;
-                    Runtime.getRuntime().exit(0);
-                    break;
-            }
-        }
+        Thread thread_IG = new Thread(Main::interaction_console);
+        Thread thread_CONSOLE = new Thread(() -> launch(args));
+        thread_IG.start();
+        thread_CONSOLE.start();
     }
 }
 

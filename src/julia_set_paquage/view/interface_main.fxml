@@ -162,7 +162,7 @@
 
         </AnchorPane>
         <!-- Zoom -->
-        <JFXSlider fx:id="slider_zoome" blockIncrement="0.5" layoutX="765.0" layoutY="31.0" majorTickUnit="10.0" max="200.0" min="1.0" minorTickCount="9" orientation="VERTICAL" prefHeight="735.0" prefWidth="25.0" styleClass="jfx-slider" value="1.0" />
+        <JFXSlider fx:id="slider_zoome" blockIncrement="1.0" layoutX="765.0" layoutY="31.0" majorTickUnit="10.0" max="150.0" min="1.0" minorTickCount="9" orientation="VERTICAL" prefHeight="735.0" prefWidth="25.0" styleClass="jfx-slider" value="1.0" />
         <FontAwesomeIconView fill="#2196f3" glyphName="SEARCH_PLUS" layoutX="771.0" layoutY="25.0" size="15" />
         <FontAwesomeIconView fill="#2196f3" glyphName="SEARCH_MINUS" layoutX="771.0" layoutY="785.0" size="15" />
         <!-- fin Control panel -->
