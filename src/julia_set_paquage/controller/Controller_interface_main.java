@@ -1,20 +1,31 @@
 package julia_set_paquage.controller;
 
 import com.jfoenix.controls.*;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import julia_set_paquage.model.Complexe;
 import julia_set_paquage.model.Fractal;
 import julia_set_paquage.model.Julia;
 import julia_set_paquage.model.Mandelbrot;
+
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -31,76 +42,107 @@ public class Controller_interface_main implements Initializable {
     private JFXTextField textField_img;
     @FXML
     private ImageView imageView_image;
-
     @FXML
     private JFXRadioButton radioButton_julia;
     @FXML
     private JFXRadioButton radioButton_mandelbrot;
-
     @FXML
     private JFXColorPicker colorPicker_convergence;
-
     @FXML
     private JFXSlider slider_zoome;
     @FXML
     private JFXSlider slider_moveX;
     @FXML
     private JFXSlider slider_moveY;
-
-
     @FXML
     private JFXCheckBox checkBox_color;
-
-
     @FXML
     private JFXTextField textField_maxIteration;
+    @FXML
+    private JFXButton btn_calculer;
+    @FXML
+    private JFXButton btn_reset;
+    @FXML
+    private JFXButton btn_save_png;
 
 
     private BufferedImage my_fractal;
-
 
     @FXML
     //methode pour le button quitter
     private void quiter(ActionEvent event) {
         ((Node) (event.getSource())).getScene().getWindow().hide();
+        Runtime.getRuntime().exit(0);
     }
 
     @FXML
     //methode to go to interface julia set result
-    private void calculer() {
+    private void calculer(ActionEvent event) {
 
         if (isInputValid()) {
 
+            ((Node) (event.getSource())).getScene().setCursor(Cursor.WAIT);
+            btn_calculer.setDisable(true);
+            btn_reset.setDisable(true);
+            btn_save_png.setDisable(true);
 
-            if (radioButton_julia.isSelected()) {
-                Complexe complexe = new Complexe(Double.parseDouble(textField_real.getText()), Double.parseDouble(textField_img.getText()));
-                Julia julia = new Julia(complexe, Integer.parseInt(textField_maxIteration.getText()), slider_zoome.getValue(), slider_moveX.getValue(), slider_moveY.getValue());
-                //get buffredimage
-                my_fractal = julia.drawJulia((int) imageView_image.getFitWidth(), (int) imageView_image.getFitHeight());
-            }
-            if (radioButton_mandelbrot.isSelected()) {
-                Mandelbrot mandelbrot = new Mandelbrot(Integer.parseInt(textField_maxIteration.getText()), slider_zoome.getValue(), slider_moveX.getValue(), slider_moveY.getValue());
-                //get buffredimage
-                my_fractal = mandelbrot.drawMandelbrot((int) imageView_image.getFitWidth(), (int) imageView_image.getFitHeight());
-            }
+            Service<Void> calculate = new Service<Void>() {
+                @Override
+                protected Task<Void> createTask() {
+                    return new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+
+                            if (radioButton_julia.isSelected()) {
+                                Complexe complexe = new Complexe(Double.parseDouble(textField_real.getText()), Double.parseDouble(textField_img.getText()));
+                                Julia julia = new Julia(complexe, Integer.parseInt(textField_maxIteration.getText()), slider_zoome.getValue(), slider_moveX.getValue(), slider_moveY.getValue());
+                                //get buffredimage
+                                my_fractal = julia.drawJulia((int) imageView_image.getFitWidth(), (int) imageView_image.getFitHeight());
+                            }
+
+                            if (radioButton_mandelbrot.isSelected()) {
+                                Mandelbrot mandelbrot = new Mandelbrot(Integer.parseInt(textField_maxIteration.getText()), slider_zoome.getValue(), slider_moveX.getValue(), slider_moveY.getValue());
+                                //get buffredimage
+                                my_fractal = mandelbrot.drawMandelbrot((int) imageView_image.getFitWidth(), (int) imageView_image.getFitHeight());
+                            }
 
 
-            if (checkBox_color.isSelected()) {
-                //get color
-                javafx.scene.paint.Color fx = colorPicker_convergence.getValue();
+                            if (checkBox_color.isSelected()) {
+                                //get color
+                                javafx.scene.paint.Color fx = colorPicker_convergence.getValue();
 
-                //convert color
-                Color color = new Color((float) fx.getRed(), (float) fx.getGreen(), (float) fx.getBlue(), (float) fx.getOpacity());
+                                //convert color
+                                Color color = new Color((float) fx.getRed(), (float) fx.getGreen(), (float) fx.getBlue(), (float) fx.getOpacity());
 
-                //set colorisation
-                Fractal.colorisation(my_fractal, color, true, 1);
-            }
+                                //set colorisation
+                                Fractal.colorisation(my_fractal, color, true, 1);
+                            }
 
-            //converting buffer to image
-            Image image = SwingFXUtils.toFXImage(my_fractal, null);
+                            //converting buffer to image
+                            Image image = SwingFXUtils.toFXImage(my_fractal, null);
 
-            //afficher dans imageview
-            imageView_image.setImage(image);
+                            //afficher dans imageview
+                            imageView_image.setImage(image);
+
+                            return null;
+                        }
+                    };
+                }
+            };
+
+            calculate.stateProperty().addListener((ObservableValue<? extends Worker.State> observableValue, Worker.State oldValue, Worker.State newValue) -> {
+                switch (newValue) {
+                    case FAILED:
+                    case CANCELLED:
+                    case SUCCEEDED:
+                        ((Node) (event.getSource())).getScene().setCursor(Cursor.DEFAULT);
+                        btn_calculer.setDisable(false);
+                        btn_reset.setDisable(false);
+                        btn_save_png.setDisable(false);
+                        break;
+                }
+            });
+            calculate.start();
         }
 
     }
@@ -133,6 +175,7 @@ public class Controller_interface_main implements Initializable {
         slider_moveX.setValue(0);
         slider_moveY.setValue(0);
         textField_maxIteration.setText("50");
+        btn_save_png.setDisable(true);
         action_chooseJulia();
     }
 
@@ -147,9 +190,9 @@ public class Controller_interface_main implements Initializable {
 
             if (selectedDirectory == null) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Erreur path");
-                alert.setHeaderText("Choose path");
-                alert.setContentText("Veuillez selectioner un repertoire");
+                alert.setTitle("Sauvegarde fractal");
+                alert.setHeaderText("Erreur d'accès");
+                alert.setContentText("Le chemin d'accès spécifié est introuvable");
                 alert.showAndWait();
             } else {
                 if (radioButton_julia.isSelected())
@@ -157,9 +200,9 @@ public class Controller_interface_main implements Initializable {
                 else
                     Fractal.saveToFile(my_fractal, "MandelbrotSet", selectedDirectory.getAbsolutePath());
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Image set");
-                alert.setHeaderText("Image créée");
-                alert.setContentText("Votre image est sauvguardé dans \n" + selectedDirectory.getAbsolutePath());
+                alert.setTitle("Sauvegarde fractal");
+                alert.setHeaderText("Image enregistrer");
+                alert.setContentText("Votre image fractal est enregistrer dans \n" + selectedDirectory.getAbsolutePath());
                 alert.showAndWait();
             }
         }
@@ -230,7 +273,6 @@ public class Controller_interface_main implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         textField_real.setText("0.285");
         textField_img.setText("0.01");
         slider_zoome.setValue(1);
@@ -238,7 +280,7 @@ public class Controller_interface_main implements Initializable {
         slider_moveY.setValue(0);
         textField_maxIteration.setText("50");
         colorPicker_convergence.setValue(javafx.scene.paint.Color.valueOf("0x2F65A5"));
+        btn_save_png.setDisable(true);
         action_set_color();
-
     }
 }

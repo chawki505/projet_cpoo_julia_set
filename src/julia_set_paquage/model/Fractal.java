@@ -49,6 +49,7 @@ public class Fractal {
     public int divergence(Complexe z, Complexe constante) {
         int i = getMaxIteration();
         while (z.modulus() <= 2 && i > 0) {
+
             //calcul new z
             double cx = z.getReel() * z.getReel() - z.getImm() * z.getImm() + constante.getReel();
             double cy = 2.0 * z.getReel() * z.getImm() + constante.getImm();
@@ -89,31 +90,6 @@ public class Fractal {
                         image.setRGB(i, j, maCouleur.getRGB());
                     }
                 }
-            }
-        }
-    }
-
-
-    public static Color set_color(Color actuel, Color maCouleur, boolean degrade, int tolerance) {
-
-
-        if (actuel.getGreen() < tolerance) {
-
-            return new Color(0, 0, 0);
-        } else {
-
-            if (degrade) {
-                int nr = (actuel.getRed() + maCouleur.getRed()) % 256;
-
-                int ng = (actuel.getGreen() + maCouleur.getGreen()) % 256;
-
-                int nb = (actuel.getBlue() + maCouleur.getBlue()) % 256;
-
-                return new Color(nr, ng, nb);
-
-            } else {
-
-                return maCouleur;
             }
         }
     }

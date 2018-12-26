@@ -6,15 +6,14 @@ public class Complexe {
     private final double imm;
 
 
-    //default constructor with init parametre
-    public Complexe() {
-        this.reel = -0.5;
-        this.imm = 0.6;
-    }
-
     public Complexe(double reel, double imm) {
         this.reel = reel;
         this.imm = imm;
+    }
+
+    public Complexe(Complexe complexe) {
+        this.reel = complexe.getReel();
+        this.imm = complexe.getImm();
     }
 
 
@@ -51,8 +50,8 @@ public class Complexe {
     public Complexe times(Complexe b) {
         Complexe a = this;       // invoking object
 
-        double real = (a.getReel() * b.getReel()) - (a.getImm() * b.getImm());
-        double imag = (a.getReel() * b.getImm()) + (a.getImm() * b.getImm());
+        double real = a.getReel() * b.getReel() - a.getImm() * b.getImm();
+        double imag = a.getReel() * b.getImm() + a.getImm() * b.getReel();
 
         return new Complexe(real, imag);
     }
@@ -60,8 +59,9 @@ public class Complexe {
     //version static
     public static Complexe times(Complexe a, Complexe b) {
 
-        double real = (a.getReel() * b.getReel()) - (a.getImm() * b.getImm());
-        double imag = (a.getReel() * b.getImm()) + (a.getImm() * b.getImm());
+        double real = a.getReel() * b.getReel() - a.getImm() * b.getImm();
+
+        double imag = a.getReel() * b.getImm() + a.getImm() * b.getReel();
 
         return new Complexe(real, imag);
     }
