@@ -11,18 +11,20 @@ public class Mandelbrot extends Fractal {
     }
 
 
+    //methode pour le calcule de mandelbrot
     public BufferedImage drawMandelbrot(int largeurMax, int longeurMax) {
-
         BufferedImage image = new BufferedImage(largeurMax, longeurMax, BufferedImage.TYPE_INT_RGB);
-
         for (int x = 0; x < largeurMax; x++) {
             for (int y = 0; y < longeurMax; y++) {
 
-                Complexe c = new Complexe(redimentionX(x, largeurMax), redimentionY(y, longeurMax));
+                //init data
+                Complexe constante = new Complexe(redimentionX(x, largeurMax), redimentionY(y, longeurMax));
                 Complexe z = new Complexe(0, 0);
-
-                int n = divergence(z, c);
+                //get divergence
+                int n = divergence(z, constante);
+                //calcule color pixel
                 int color = Color.HSBtoRGB((getMaxIteration() / (float) (n) % 1), 1, n > 0 ? 1 : 0);
+                //set pixel
                 image.setRGB(x, y, color);
             }
         }

@@ -11,7 +11,6 @@ import julia_set_paquage.model.Fractal;
 import julia_set_paquage.model.Julia;
 import julia_set_paquage.model.Mandelbrot;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 public class Main extends Application {
@@ -27,12 +26,38 @@ public class Main extends Application {
 
     }
 
+    public static void main(String[] args) {
+        //thread de l'interface graphique
+        Thread thread_IG = new Thread(Main::interaction_console);
+        //thread de l'interface console
+        Thread thread_CONSOLE = new Thread(() -> launch(args));
+        //lencement des threads
+        thread_IG.start();
+        thread_CONSOLE.start();
+    }
+
+
+    /**
+     * MODE CONSOLE
+     **/
+    private static int lecture_int() {
+        Scanner sc = new Scanner(System.in);
+        return sc.nextInt();
+    }
+
+    private static float lecture_float() {
+        Scanner sc = new Scanner(System.in);
+        return sc.nextFloat();
+    }
+
+    private static String lecture_string() {
+        Scanner sc = new Scanner(System.in);
+        return sc.nextLine();
+    }
 
     private static void interaction_console() {
-        float real, img;
-        String choix;
         boolean status = true;
-        Scanner sc = new Scanner(System.in);
+        Thread thread_calcule;
 
         while (status) {
             System.out.println("Veuillez saisir un mode :");
@@ -40,59 +65,67 @@ public class Main extends Application {
             System.out.println("2- Mandelbrot Set");
             System.out.println("3- Quiter");
             System.out.print("Votre choix ? :");
-            choix = sc.nextLine();
 
+            String choix = lecture_string();
 
-            switch (choix) {
-                case "1":
+            try {
+                switch (choix) {
+                    case "1":
+                        //get data
+                        System.out.println(" --> Veuillez saisir le nombre complexe de la fomre (reel + i imaginaire) :");
+                        System.out.print("   --> Real :");
+                        float real = lecture_float();
+                        System.out.print("   --> Imaginaire :");
+                        float img = lecture_float();
+                        System.out.print(" --> Max iteration : ");
+                        int max_iterJ = lecture_int();
+                        System.out.print(" --> Largeur de votre image : ");
+                        int largeur_imageJ = lecture_int();
+                        System.out.print(" --> Hauteur de votre image : ");
+                        int hauteur_imageJ = lecture_int();
 
-                    System.out.println(" --> Veuillez saisir le nombre complexe de la fomre (reel + i imaginaire) :");
-                    System.out.print("   --> Real :");
-                    try {
-                        real = Float.valueOf(sc.nextLine());
-                    } catch (NumberFormatException e) {
+                        Julia julia = new Julia(new Complexe(real, img), max_iterJ, 1, 0, 0);
+
+                        //lencement du calcule dans un autre thread
+                        thread_calcule = new Thread(() -> Fractal.saveToFile(julia.drawJulia(largeur_imageJ, hauteur_imageJ),
+                                "fractal_julia_image", System.getenv("PWD")));
+                        thread_calcule.start();
+                        System.out.println(" --> image enregister dans " + System.getenv("PWD"));
                         break;
-                    }
-                    System.out.print("   --> Imaginaire :");
 
-                    try {
-                        img = Float.valueOf(sc.nextLine());
-                    } catch (NumberFormatException e) {
+                    case "2":
+                        //get data
+                        System.out.print(" --> Max iteration : ");
+                        int max_iterM = lecture_int();
+                        System.out.print(" --> Largeur de votre image : ");
+                        int largeur_imageM = lecture_int();
+                        System.out.print(" --> Hauteur de votre image : ");
+                        int hauteur_imageM = lecture_int();
+
+                        Mandelbrot mandelbrot = new Mandelbrot(max_iterM, 1, 0, 0);
+                        //lencement du thread de calcule
+                        thread_calcule = new Thread(() -> Fractal.saveToFile(mandelbrot.drawMandelbrot(largeur_imageM, hauteur_imageM),
+                                "fractal_mandelbrot_image", System.getenv("PWD")));
+                        thread_calcule.start();
+                        System.out.println(" --> image enregister dans " + System.getenv("PWD"));
                         break;
-                    }
-                    Complexe complexe = new Complexe(real, img);
-                    Julia julia = new Julia(complexe, 100, 1, 0, 0);
-                    Fractal.saveToFile(julia.drawJulia(1000, 1000), "fractal_julia", System.getenv("PWD"));
-                    System.out.println("   --> image enregister dans " + System.getenv("PWD"));
-                    break;
 
-                case "2":
-                    Mandelbrot mandelbrot = new Mandelbrot(100, 1, 0, 0);
-                    Fractal.saveToFile(mandelbrot.drawMandelbrot(1000, 1000), "fractal_mandelbrot", System.getenv("PWD"));
-                    System.out.println("    --> image enregister dans " + System.getenv("PWD"));
-                    break;
-
-
-                case "3":
-                    status = false;
-                    Runtime.getRuntime().exit(0);
-                    break;
+                    case "3":
+                        status = false;
+                        //arreter le programme
+                        Runtime.getRuntime().exit(0);
+                        break;
+                }
+            } catch (Exception e) {
+                continue;
             }
-
             System.out.println();
         }
+
     }
 
 
-    public static void main(String[] args) {
-        Thread thread_IG = new Thread(Main::interaction_console);
-        Thread thread_CONSOLE = new Thread(() -> launch(args));
-        thread_IG.start();
-        thread_CONSOLE.start();
-    }
 }
 
 
-/*TODO: ajouter mode terminal */
-/*TODO: ajouter les threads */
 /*TODO: ajouter la doc */

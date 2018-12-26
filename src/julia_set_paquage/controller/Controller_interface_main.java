@@ -7,7 +7,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -15,12 +15,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Popup;
+
 import javafx.stage.Stage;
-import javafx.stage.Window;
-import javafx.stage.WindowEvent;
 import julia_set_paquage.model.Complexe;
 import julia_set_paquage.model.Fractal;
 import julia_set_paquage.model.Julia;
@@ -76,16 +73,20 @@ public class Controller_interface_main implements Initializable {
     }
 
     @FXML
-    //methode to go to interface julia set result
+    //methode pour lencer le calcule de la fractal julia ou mandelbrot
     private void calculer(ActionEvent event) {
 
+        //test si data correcte
         if (isInputValid()) {
-
+            //change cursor type
             ((Node) (event.getSource())).getScene().setCursor(Cursor.WAIT);
+            //desactiver les boutons principal
             btn_calculer.setDisable(true);
             btn_reset.setDisable(true);
             btn_save_png.setDisable(true);
 
+
+            //lancer un un service de tache de fond pour le calcule
             Service<Void> calculate = new Service<Void>() {
                 @Override
                 protected Task<Void> createTask() {
@@ -106,7 +107,7 @@ public class Controller_interface_main implements Initializable {
                                 my_fractal = mandelbrot.drawMandelbrot((int) imageView_image.getFitWidth(), (int) imageView_image.getFitHeight());
                             }
 
-
+                            //test si colorisation activer
                             if (checkBox_color.isSelected()) {
                                 //get color
                                 javafx.scene.paint.Color fx = colorPicker_convergence.getValue();
@@ -118,7 +119,7 @@ public class Controller_interface_main implements Initializable {
                                 Fractal.colorisation(my_fractal, color, true, 1);
                             }
 
-                            //converting buffer to image
+                            //converting bufferimage to imageView
                             Image image = SwingFXUtils.toFXImage(my_fractal, null);
 
                             //afficher dans imageview
@@ -129,7 +130,6 @@ public class Controller_interface_main implements Initializable {
                     };
                 }
             };
-
             calculate.stateProperty().addListener((ObservableValue<? extends Worker.State> observableValue, Worker.State oldValue, Worker.State newValue) -> {
                 switch (newValue) {
                     case FAILED:
@@ -144,7 +144,6 @@ public class Controller_interface_main implements Initializable {
             });
             calculate.start();
         }
-
     }
 
 
@@ -160,9 +159,17 @@ public class Controller_interface_main implements Initializable {
         textField_real.setDisable(false);
     }
 
+    @FXML
+    private void action_set_color() {
+        if (checkBox_color.isSelected()) {
+            colorPicker_convergence.setDisable(false);
+        } else {
+            colorPicker_convergence.setDisable(true);
+        }
+    }
 
     @FXML
-    //methode to go to interface julia set result
+    //methode pour init data interface
     private void reset() {
         my_fractal = null;
         imageView_image.setImage(null);
@@ -258,18 +265,6 @@ public class Controller_interface_main implements Initializable {
             return false;
         }
     }
-
-
-    @FXML
-    private void action_set_color() {
-
-        if (checkBox_color.isSelected()) {
-            colorPicker_convergence.setDisable(false);
-        } else {
-            colorPicker_convergence.setDisable(true);
-        }
-    }
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
