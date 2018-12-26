@@ -1,5 +1,6 @@
 package julia_set_paquage;
 
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,9 +14,18 @@ import julia_set_paquage.model.Mandelbrot;
 
 import java.util.Scanner;
 
+/**
+ * Programme pour calculer les ensembles de julia et de mandelbrot en mode interface graphique et en mode console
+ */
 public class Main extends Application {
 
 
+    /**
+     * methode pour charger l'interface graphique principale
+     *
+     * @param primaryStage stage de l'interface
+     * @throws Exception erreur de chargement du fichier FXML de l'interface
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("view/interface_main.fxml"));
@@ -26,6 +36,11 @@ public class Main extends Application {
 
     }
 
+    /**
+     * le main du projet qui execute l'interface graphique et le mode console avec les threads separer
+     *
+     * @param args args du main pour lancer l'interface graphique
+     */
     public static void main(String[] args) {
         //thread de l'interface graphique
         Thread thread_IG = new Thread(Main::interaction_console);
@@ -36,25 +51,34 @@ public class Main extends Application {
         thread_CONSOLE.start();
     }
 
-
     /**
-     * MODE CONSOLE
-     **/
+     * @return nombre int saisi
+     */
     private static int lecture_int() {
         Scanner sc = new Scanner(System.in);
         return sc.nextInt();
     }
 
+    /**
+     * @return nombre float saisi
+     */
     private static float lecture_float() {
         Scanner sc = new Scanner(System.in);
         return sc.nextFloat();
     }
 
+    /**
+     * @return chaine saisi
+     */
     private static String lecture_string() {
         Scanner sc = new Scanner(System.in);
         return sc.nextLine();
     }
 
+
+    /**
+     * mode interaction dans la console pour l'interface console
+     */
     private static void interaction_console() {
         boolean status = true;
         Thread thread_calcule;
@@ -126,6 +150,3 @@ public class Main extends Application {
 
 
 }
-
-
-/*TODO: ajouter la doc */

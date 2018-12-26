@@ -7,7 +7,6 @@ import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -16,13 +15,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
-
 import javafx.stage.Stage;
 import julia_set_paquage.model.Complexe;
 import julia_set_paquage.model.Fractal;
 import julia_set_paquage.model.Julia;
 import julia_set_paquage.model.Mandelbrot;
-
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -30,6 +27,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controller de l'interface graphique
+ */
 public class Controller_interface_main implements Initializable {
 
 
@@ -65,6 +65,11 @@ public class Controller_interface_main implements Initializable {
 
     private BufferedImage my_fractal;
 
+    /**
+     * action pour fermer l'interface et quitter le programme
+     *
+     * @param event action event de l'interface
+     */
     @FXML
     //methode pour le button quitter
     private void quiter(ActionEvent event) {
@@ -72,6 +77,11 @@ public class Controller_interface_main implements Initializable {
         Runtime.getRuntime().exit(0);
     }
 
+    /**
+     * action pour lancer un calcule de la fractal
+     *
+     * @param event action event de l'interface
+     */
     @FXML
     //methode pour lencer le calcule de la fractal julia ou mandelbrot
     private void calculer(ActionEvent event) {
@@ -116,7 +126,7 @@ public class Controller_interface_main implements Initializable {
                                 Color color = new Color((float) fx.getRed(), (float) fx.getGreen(), (float) fx.getBlue(), (float) fx.getOpacity());
 
                                 //set colorisation
-                                Fractal.colorisation(my_fractal, color, true, 1);
+                                Fractal.colorisation(my_fractal, color, 1);
                             }
 
                             //converting bufferimage to imageView
@@ -147,18 +157,27 @@ public class Controller_interface_main implements Initializable {
     }
 
 
+    /**
+     * action pour le choix du mode mandelbrot
+     */
     @FXML
     private void action_chooseMandelbrot() {
         textField_img.setDisable(true);
         textField_real.setDisable(true);
     }
 
+    /**
+     * action pour le choix du mode julia
+     */
     @FXML
     private void action_chooseJulia() {
         textField_img.setDisable(false);
         textField_real.setDisable(false);
     }
 
+    /**
+     * action pour l'activation ou la desactivation de la couleur personaliser
+     */
     @FXML
     private void action_set_color() {
         if (checkBox_color.isSelected()) {
@@ -168,8 +187,10 @@ public class Controller_interface_main implements Initializable {
         }
     }
 
+    /**
+     * action pour rénitialiser les données dans l'interface
+     */
     @FXML
-    //methode pour init data interface
     private void reset() {
         my_fractal = null;
         imageView_image.setImage(null);
@@ -186,8 +207,10 @@ public class Controller_interface_main implements Initializable {
         action_chooseJulia();
     }
 
+    /**
+     * action pour enregistrer l'image en png
+     */
     @FXML
-    //methode pour enregistrer l'image en png
     private void save_png() {
 
         if (my_fractal != null) {
@@ -216,7 +239,12 @@ public class Controller_interface_main implements Initializable {
     }
 
 
-    //methode pour verifier la saisi correcte  else elle affiche une boite de dialogue de message d'erreur
+    /**
+     * methode pour verifier la saisi correcte  else elle affiche une boite de dialogue de message d'erreur
+     *
+     * @return false si données saisi est fausse sinon true
+     */
+    //
     private boolean isInputValid() {
 
         String errorMessage = "";
@@ -266,6 +294,12 @@ public class Controller_interface_main implements Initializable {
         }
     }
 
+    /**
+     * methode qui s'execute automatiquement lors du chargement de l'interface fxml
+     *
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         textField_real.setText("0.285");
