@@ -31,12 +31,15 @@ public class Mandelbrot extends Fractal {
      */
     public BufferedImage drawMandelbrot(int largeurMax, int longeurMax) {
         BufferedImage image = new BufferedImage(largeurMax, longeurMax, BufferedImage.TYPE_INT_RGB);
+
         for (int x = 0; x < largeurMax; x++) {
             for (int y = 0; y < longeurMax; y++) {
 
                 //init data
                 Complexe constante = new Complexe(redimentionX(x, largeurMax), redimentionY(y, longeurMax));
+
                 Complexe z = new Complexe(0, 0);
+
                 //get divergence
                 int n = divergence(z, constante);
                 //calcule color pixel

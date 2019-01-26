@@ -96,6 +96,7 @@ public class Fractal {
             //z = new Complexe(cx, cy);
 
             //formule new_z = (old_z * old_z) + constante
+
             z = constante.plus(z.times(z));
 
             i--;
@@ -133,7 +134,6 @@ public class Fractal {
                     Color nc = new Color(nr, ng, nb);
 
                     image.setRGB(i, j, nc.getRGB());
-
                 }
             }
         }

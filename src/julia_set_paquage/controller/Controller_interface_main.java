@@ -140,6 +140,7 @@ public class Controller_interface_main implements Initializable {
                     };
                 }
             };
+
             calculate.stateProperty().addListener((ObservableValue<? extends Worker.State> observableValue, Worker.State oldValue, Worker.State newValue) -> {
                 switch (newValue) {
                     case FAILED:
@@ -152,6 +153,8 @@ public class Controller_interface_main implements Initializable {
                         break;
                 }
             });
+
+
             calculate.start();
         }
     }
@@ -229,6 +232,7 @@ public class Controller_interface_main implements Initializable {
                     Fractal.saveToFile(my_fractal, "JuliaSet", selectedDirectory.getAbsolutePath());
                 else
                     Fractal.saveToFile(my_fractal, "MandelbrotSet", selectedDirectory.getAbsolutePath());
+
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Sauvegarde fractal");
                 alert.setHeaderText("Image enregistrer");
@@ -281,6 +285,8 @@ public class Controller_interface_main implements Initializable {
                 errorMessage += "- votre saisie du nombre d'iteration max n'est pas un nombre correcte !\n";
             }
         }
+
+
         if (errorMessage.length() == 0) {
             return true;
         } else {

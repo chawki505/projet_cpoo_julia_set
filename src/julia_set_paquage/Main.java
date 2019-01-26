@@ -29,11 +29,14 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("view/interface_main.fxml"));
-        primaryStage.initStyle(StageStyle.UNDECORATED);
-        primaryStage.setTitle("Julia Set");
-        primaryStage.setScene(new Scene(root));
-        primaryStage.show();
 
+        primaryStage.initStyle(StageStyle.UNDECORATED);
+
+        primaryStage.setTitle("Julia Set");
+
+        primaryStage.setScene(new Scene(root));
+
+        primaryStage.show();
     }
 
     /**
@@ -44,8 +47,11 @@ public class Main extends Application {
     public static void main(String[] args) {
         //thread de l'interface graphique
         Thread thread_IG = new Thread(Main::interaction_console);
+
         //thread de l'interface console
         Thread thread_CONSOLE = new Thread(() -> launch(args));
+
+
         //lencement des threads
         thread_IG.start();
         thread_CONSOLE.start();
@@ -81,6 +87,7 @@ public class Main extends Application {
      */
     private static void interaction_console() {
         boolean status = true;
+
         Thread thread_calcule;
 
         while (status) {
@@ -113,7 +120,9 @@ public class Main extends Application {
                         //lencement du calcule dans un autre thread
                         thread_calcule = new Thread(() -> Fractal.saveToFile(julia.drawJulia(largeur_imageJ, hauteur_imageJ),
                                 "fractal_julia_image", System.getenv("PWD")));
+
                         thread_calcule.start();
+
                         System.out.println(" --> image enregister dans " + System.getenv("PWD"));
                         break;
 
@@ -127,6 +136,7 @@ public class Main extends Application {
                         int hauteur_imageM = lecture_int();
 
                         Mandelbrot mandelbrot = new Mandelbrot(max_iterM, 1, 0, 0);
+
                         //lencement du thread de calcule
                         thread_calcule = new Thread(() -> Fractal.saveToFile(mandelbrot.drawMandelbrot(largeur_imageM, hauteur_imageM),
                                 "fractal_mandelbrot_image", System.getenv("PWD")));
@@ -145,8 +155,5 @@ public class Main extends Application {
             }
             System.out.println();
         }
-
     }
-
-
 }
